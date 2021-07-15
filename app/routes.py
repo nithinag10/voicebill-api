@@ -6,6 +6,6 @@ from flask import jsonify , request
 def handle():
     return "Error ide Macha"
 
-@app.route("/" , methods=['GET', 'POST'])
+@app.route("/")
 def home():
-    return jsonify({'res':request.args.get('string')})
+    return "Machas its working!!"
