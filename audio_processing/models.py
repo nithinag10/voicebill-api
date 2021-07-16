@@ -3,7 +3,10 @@ from os import path
 from flask import Flask, jsonify, request, session, redirect
 import base64
 import speech_recognition as sr
-
+import soundfile as sf
+import pydub
+from pydub import AudioSegment
+import subprocess
 
 class Processor:
 
@@ -20,10 +23,13 @@ class Processor:
         audio_path = path.join(path.dirname(path.realpath(__file__)) ,'last.3gp' )
         audio_file = open(audio_path, "wb")
         decode_string = base64.b64decode(encoded_string)
-        print(audio_file.write(decode_string))
+        audio_file.write(decode_string)
         wav_path = path.join(path.dirname(path.realpath(__file__)) ,'last.wav' )
-        cmd = 'ffmpeg -i '+audio_path+' '+wav_path
-        os.system(cmd)
+        try :
+            cmd = 'ffmpeg -i '+audio_path+' '+wav_path
+            os.system(cmd)
+        except:
+            return jsonify({'error': 'Error in converting 3gp to wav'})
         return wav_path
 
     def covert_speech_to_text(self , wav_path):
