@@ -3,10 +3,6 @@ from os import path
 from flask import Flask, jsonify, request, session, redirect
 import base64
 import speech_recognition as sr
-import soundfile as sf
-import pydub
-from pydub import AudioSegment
-import subprocess
 
 class Processor:
 
