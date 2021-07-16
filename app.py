@@ -8,5 +8,4 @@ def home():
     return "Welcome Home machas"
 
 
-if __name__ == "__main__":
-    app.run()
+

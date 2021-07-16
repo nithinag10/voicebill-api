@@ -1,2 +1,1 @@
-web:gun
-icorn app:app
+web:gunicorn app:app
