@@ -19,22 +19,28 @@ class Processor:
         audio_path = path.join(path.dirname(path.realpath(__file__)) ,'last.3gp' )
         audio_file = open(audio_path, "wb")
         decode_string = base64.b64decode(encoded_string)
-        audio_file.write(decode_string)
+        print(audio_file.write(decode_string))
         wav_path = path.join(path.dirname(path.realpath(__file__)) ,'last.wav' )
         cmd = 'ffmpeg -i '+audio_path+' '+wav_path
         os.system(cmd)
         return wav_path
 
     def covert_speech_to_text(self , wav_path):
+        def deleteTempFiles(wav_path):
+            os.remove(path.join(path.dirname(path.realpath(__file__)), 'last.3gp'))
+            os.remove(wav_path)
         r = sr.Recognizer()
         with sr.WavFile(wav_path) as source:  # use "test.wav" as the audio source
             audio = r.record(source)  # extract audio data from the file
             try:
                 text = r.recognize_google(audio, language='en-US')  # generate a list of possible transcription#
             except sr.UnknownValueError:
+                deleteTempFiles(wav_path)
                 return jsonify({'Error' : 'Voice not clear'})
             except r.RequestError:
+                deleteTempFiles(wav_path)
                 return jsonify({'error' : 'API not available'})
+            deleteTempFiles(wav_path)
             return jsonify({'text' : text})
 
 
