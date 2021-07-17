@@ -21,7 +21,7 @@ class Processor:
         decode_string = base64.b64decode(encoded_string)
         print(audio_file.write(decode_string))
         wav_path = path.join(path.dirname(path.realpath(__file__)) ,'last.wav' )
-        cmd = 'ffmpeg -i '+audio_path+' '+wav_path
+        cmd = 'ffmpeg -i '+audio_path+' -acodec pcm_u8 -ar 22050 '+wav_path
         os.system(cmd)
         return wav_path
 
