@@ -8,7 +8,12 @@ app = Flask(__name__)
 
 client = MongoClient("mongodb+srv://RFIDpayments:Ff6RfZyRN5arkgvz@payments-ukurt.mongodb.net/test?retryWrites=true&w=majority")
 db = client["voice_bill"]
-collection = db["items"]
+collection = db["system_users"]
+
+
+@app.route("/")
+def home():
+    return "His is home macha"
 
 
 @app.route("/fetch", methods=["POST"])
