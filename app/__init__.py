@@ -7,6 +7,7 @@ app = Flask(__name__)
 client = MongoClient("mongodb+srv://RFIDpayments:Ff6RfZyRN5arkgvz@payments-ukurt.mongodb.net/test?retryWrites=true&w=majority")
 db = client["voice_bill"]
 collection = db["system_users"]
+item_collection = db["items_description"]
 
 
 @app.route("/")
@@ -32,8 +33,25 @@ def fetch_user_data():
         return data_json
 
 
+@app.route("/bill", methods=['POST'])
+def fetch_bill():
+    inputs = request.get_json(force=True)
+    test = inputs["test"]
+    collection = item_collection.find()
+    col_list = list(collection)
+    col_json = dumps(col_list)
+    print(col_json)
+    return "macha function bari"
+
+@app.route("/add", methods=["POST"])
+def add_item():
+    inputs = request.get_json(force=True)
+    name=inputs["name"]
+    quantity = inputs["quantity"]
+    unit = inputs["unit"]
+    price = inputs["price"]
+    data = item_collection.insert({"name":name,"quantity":quantity,"unit":unit,"price":price,"frequency":0})
+    return {"response":"new item added"}
+
 from audio_processing.routes import *
 
-
-# if __name__ == '__main__':
-#     app.run(debug=True, use_reloader=True)
