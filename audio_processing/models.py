@@ -19,7 +19,7 @@ class Processor:
         audio_path = path.join(path.dirname(path.realpath(__file__)) ,'last.3gp' )
         audio_file = open(audio_path, "wb")
         decode_string = base64.b64decode(encoded_string)
-        print(audio_file.write(decode_string))
+        audio_file.write(decode_string)
         wav_path = path.join(path.dirname(path.realpath(__file__)) ,'last.wav' )
         cmd = 'ffmpeg -i '+audio_path+' -f wav -acodec pcm_s16le -ar 22050 -ac 1 '+wav_path
         os.system(cmd)
@@ -41,7 +41,7 @@ class Processor:
                 deleteTempFiles(wav_path)
                 return jsonify({'error' : 'API not available'})
             deleteTempFiles(wav_path)
-            return jsonify({'text' : text})
+            return text
 
 
 
