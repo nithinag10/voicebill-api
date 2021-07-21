@@ -40,6 +40,6 @@ def process_input():
             return jsonify({'Error': "Utterance not in order"})
         calculator.fetch_item()
         try:
-            return jsonify({'res':calculator.calculate_bill()})
+            return jsonify({'res':[calculator.calculate_bill()]})
         except IndexError:
             return jsonify({'Error': "Item not in the list"})
