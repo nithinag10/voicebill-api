@@ -5,9 +5,9 @@ import string
 from flask import jsonify
 import re
 from pymongo import MongoClient
-# nltk.download('averaged_perceptron_tagger')
-# nltk.download('stopwords')
-# nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('stopwords')
+nltk.download('punkt')
 
 client = MongoClient("mongodb+srv://RFIDpayments:Ff6RfZyRN5arkgvz@payments-ukurt.mongodb.net/test?retryWrites=true&w=majority")
 db = client["voice_bill"]
