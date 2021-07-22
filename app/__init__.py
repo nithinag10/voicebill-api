@@ -1,7 +1,11 @@
 from flask import Flask
+from flask import request, jsonify
+import pymongo
 from pymongo import MongoClient
+import bson
 from bson.json_util import dumps
-from datetime import datetime
+from bson import json_util
+import json
 
 app = Flask(__name__)
 
@@ -15,7 +19,7 @@ item_collection = db["items_description"]
 
 @app.route("/")
 def home():
-    return "His is home macha"
+    return "This is home macha"
 
 
 @app.route("/fetch", methods=["POST"])
@@ -26,7 +30,6 @@ def fetch_user_data():
     data = collection.find({"_id": id, "username": username})
     data_list = list(data)
     data_json = dumps(data_list)
-
     if data_list == []:
         collection.insert_one({"_id": id, "username": username})
         find = collection.find({"_id": id, "username": username})
@@ -42,6 +45,21 @@ def fetch_user_data():
         return data_json
 
 
+@app.route("/addbill", methods=['POST'])
+def add_bill():
+    inputs = request.get_json(force=True)
+    customer = inputs["customer"]
+    total = inputs["total"]
+    items = inputs["items"]
+    userId = inputs["userId"]
+    bills.insert_one({"customer": customer, "total": total, "items": items, "userId": userId})
+    response = bills.find({"customer": customer, "total": total, "items": items, "userId": userId})
+    response_list = list(response)
+    response_json = dumps(response_list)
+    print(response_json)
+    return response_json
+
+
 @app.route("/bill", methods=['POST'])
 def fetch_bill():
     inputs = request.get_json(force=True)
@@ -50,7 +68,7 @@ def fetch_bill():
     col_list = list(collection)
     col_json = dumps(col_list)
     print(col_json)
-    return "macha function bari"
+    return "continue nithin"
 
 
 @app.route("/add", methods=["POST"])
@@ -64,19 +82,4 @@ def add_item():
     return {"response": "new item added"}
 
 
-@app.route("/addbill", methods=['POST'])
-def add_bill():
-    inputs = request.get_json(force=True)
-    customer = inputs["customer"]
-    total = inputs["total"]
-    items = inputs["items"]
-    userId = inputs["userId"]
-    bills.insert_one({"customer": customer, "total": total, "items": items, "userId": userId})
-    res = bills.find({"customer": customer, "total": total, "items": items, "userId": userId})
-    resData = dumps(list(res))
-    print(resData)
-    return resData
-
-
 from audio_processing.routes import *
-
