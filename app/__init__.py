@@ -23,13 +23,23 @@ def fetch_user_data():
     data = collection.find({"_id":id, "username":username})
     data_list = list(data)
     data_json = dumps(data_list)
+
     if data_list == []:
-        collection.insert_one({"_id":id, "username":username,"bills":[]})
-        data = collection.find({"_id":id,"username":username})
-        data_list = list(data)
-        data_json = dumps(data_list)
+        collection.insert_one({"_id":id, "username":username})
+        find = collection.find({"_id":id, "username":username})
+        find_list = list(find)
+        find_list.append([])
+        data_json = dumps(find_list)
         return data_json
+    
     else:
+        data = bills.find({"userId":id})
+        data_list1 = list(data)
+        data = []
+        for i in range(len(data_list1)):
+            data.append({"customer":data_list1[i]['customer'], "total":data_list1[i]['total'],"items":data_list1[i]['items']})
+        data_list.append(data)
+        data_json = dumps(data_list)
         return data_json
 
 
