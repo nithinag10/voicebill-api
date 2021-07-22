@@ -131,7 +131,7 @@ class Bill_calculator:
             self.units = 'litre'
 
         if self.units != self.items[0]['unit']:
-            return "Items don't appear to be in the store"
+            return jsonify({'error':"Items don't appear to be in the store"})
 
         price =(float(self.quantity) * float(self.items[0]['price']))/   float(self.items[0]['quantity'])
         return {
