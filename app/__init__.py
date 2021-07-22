@@ -1,64 +1,62 @@
 from flask import Flask
+from flask import request, jsonify
+import pymongo
 from pymongo import MongoClient
+import bson
+from bson import json_util
 from bson.json_util import dumps
-from datetime import datetime
+
+import json
+
 app = Flask(__name__)
 
-client = MongoClient("mongodb+srv://RFIDpayments:Ff6RfZyRN5arkgvz@payments-ukurt.mongodb.net/test?retryWrites=true&w=majority")
+client = MongoClient(
+    "mongodb+srv://RFIDpayments:Ff6RfZyRN5arkgvz@payments-ukurt.mongodb.net/test?retryWrites=true&w=majority")
 db = client["voice_bill"]
-collection = db["system_users"]
+users = db["system_users"]
+collection2 = db["billsDemo"]
 bills = db["billsDemo"]
-item_collection = db["items_description"]
-
-
-@app.route("/")
-def home():
-    return "His is home macha"
-
-
 @app.route("/fetch", methods=["POST"])
 def fetch_user_data():
     inputs = request.get_json(force=True)
     id = inputs["_id"]
     username = inputs["username"]
-    data = collection.find({"_id":id, "username":username})
+    data = users.find({"_id": id, "username": username})
     data_list = list(data)
     data_json = dumps(data_list)
-
+    print(data_list == [],type(data),data_list)
     if data_list == []:
-        collection.insert_one({"_id":id, "username":username})
-        find = collection.find({"_id":id, "username":username})
-        find_list = list(find)
-        find_list.append([])
-        data_json = dumps(find_list)
-        return data_json
-    
-    else:
-        data = bills.find({"userId":id})
-        data_list.append(data)
+        users.insert_one({"_id": id, "username": username})
+        data = users.find({"_id": id, "username": username})
+        data_list = list(data)
+        data_list.append([])
         data_json = dumps(data_list)
         return data_json
+    else:
+        # if user exists
+        data = bills.find({"userId": id})
+        # find all the bills with userId equal to the id recieved in the request
+        data_list.append(data)
+        # append the bills found with the list containing the user data
+        data_json = dumps(data_list)
+        # convert to json
+        return data_json
 
 
-@app.route("/bill", methods=['POST'])
-def fetch_bill():
+@app.route("/addbill",methods=['POST'])
+def add_bill():
     inputs = request.get_json(force=True)
-    test = inputs["test"]
-    collection = item_collection.find()
-    col_list = list(collection)
-    col_json = dumps(col_list)
-    print(col_json)
-    return "macha function bari"
+    customer = inputs["customer"]
+    total = inputs["total"]
+    items = inputs["items"]
+    userId = inputs["userId"]
+    bills.insert_one({"customer":customer,"total":total,"items":items,"userId":userId})
+    res = bills.find({"customer":customer,"total":total,"items":items,"userId":userId})
+    resData = dumps(list(res))
+    print(resData)
+    return resData
 
-@app.route("/add", methods=["POST"])
-def add_item():
-    inputs = request.get_json(force=True)
-    name=inputs["name"]
-    quantity = inputs["quantity"]
-    unit = inputs["unit"]
-    price = inputs["price"]
-    data = item_collection.insert({"name":name,"quantity":quantity,"unit":unit,"price":price,"frequency":0})
-    return {"response":"new item added"}
 
-from audio_processing.routes import *
+from app import routes
 
+from audio_processing import routes
